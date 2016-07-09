@@ -1,5 +1,4 @@
 <!doctype html>
-
 <!--
   Copyright (C) 2011-2012 Pavel Shramov
   Copyright (C) 2013 Maxime Petazzoni <maxime.petazzoni@bulix.org>
@@ -27,128 +26,161 @@
   ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
   POSSIBILITY OF SUCH DAMAGE.
 -->
-
 <html>
-  <head>
+
+<head>
     <title>leaflet-gpx demo</title>
     <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet/v0.7.7/leaflet.css" />
     <style type="text/css">
-      body { width: 800px; margin: 0 auto; }
-      .gpx { border: 5px #aaa solid; border-radius: 5px;
-        box-shadow: 0 0 3px 3px #ccc;
-        width: 800px; margin: 1em auto; }
-      .gpx header { padding: 0.5em; }
-      .gpx h3 { margin: 0; padding: 0; font-weight: bold; }
-      .gpx .start { font-size: smaller; color: #444; }
-      .gpx .map { border: 1px #888 solid; border-left: none; border-right: none;
-        width: 800px; height: 300px; margin: 0; }
-      .gpx footer { background: #f0f0f0; padding: 0.5em; }
-      .gpx ul.info { list-style: none; margin: 0; padding: 0; font-size: smaller; }
-      .gpx ul.info li { color: #666; padding: 2px; display: inline; }
-      .gpx ul.info li span { color: black; }
+        body {
+            width: 800px;
+            margin: 0 auto;
+        }
+        
+        .gpx {
+            border: 5px #aaa solid;
+            border-radius: 5px;
+            box-shadow: 0 0 3px 3px #ccc;
+            width: 800px;
+            margin: 1em auto;
+        }
+        
+        .gpx header {
+            padding: 0.5em;
+        }
+        
+        .gpx h3 {
+            margin: 0;
+            padding: 0;
+            font-weight: bold;
+        }
+        
+        .gpx .start {
+            font-size: smaller;
+            color: #444;
+        }
+        
+        .gpx .map {
+            border: 1px #888 solid;
+            border-left: none;
+            border-right: none;
+            width: 800px;
+            height: 300px;
+            margin: 0;
+        }
+        
+        .gpx footer {
+            background: #f0f0f0;
+            padding: 0.5em;
+        }
+        
+        .gpx ul.info {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            font-size: smaller;
+        }
+        
+        .gpx ul.info li {
+            color: #666;
+            padding: 2px;
+            display: inline;
+        }
+        
+        .gpx ul.info li span {
+            color: black;
+        }
     </style>
-  </head>
-  <body>
-    <input type="file" id="file-input" />  
+</head>
+
+<body>
+    <input type="file" id="file-input" />
     <section id="map-data" class="gpx" map-data-target="route-map">
-      <header>
-        <span class="start"></span>
-      </header>
-
-      <article>
-        <div class="map" id="route-map"></div>
-        <div id="route-table">
-            <ul id="route-list"></ul>
-        </div>
-      </article>
-
-      <footer>
-        <ul class="info">
-          <li>Distance:&nbsp;<span class="distance"></span>&nbsp;mi</li>
-          &mdash; <li>Duration:&nbsp;<span class="duration"></span></li>
-          &mdash; <li>Pace:&nbsp;<span class="pace"></span>/mi</li>
-          &mdash; <li>Avg&nbsp;HR:&nbsp;<span class="avghr"></span>&nbsp;bpm</li>
-          &mdash; <li>Elevation:&nbsp;+<span class="elevation-gain"></span>&nbsp;ft,
-            -<span class="elevation-loss"></span>&nbsp;ft
-            (net:&nbsp;<span class="elevation-net"></span>&nbsp;ft)</li>
-        </ul>
-      </footer>
+        <header> <span class="start"></span> </header>
+        <article>
+            <div class="map" id="route-map"></div>
+            <div id="route-table">
+                <ul id="route-list"></ul>
+            </div>
+        </article>
+        <footer>
+            <ul class="info">
+                <li>Distance:&nbsp;<span class="distance"></span>&nbsp;mi</li> &mdash;
+                <li>Duration:&nbsp;<span class="duration"></span></li> &mdash;
+                <li>Pace:&nbsp;<span class="pace"></span>/mi</li> &mdash;
+                <li>Avg&nbsp;HR:&nbsp;<span class="avghr"></span>&nbsp;bpm</li> &mdash;
+                <li>Elevation:&nbsp;+<span class="elevation-gain"></span>&nbsp;ft, -<span class="elevation-loss"></span>&nbsp;ft (net:&nbsp;<span class="elevation-net"></span>&nbsp;ft)</li>
+            </ul>
+        </footer>
     </section>
-
-
     <script src="http://cdn.leafletjs.com/leaflet/v0.7.7/leaflet.js"></script>
     <script src="https://rawgithub.com/mpetazzoni/leaflet-gpx/master/gpx.js"></script>
     <script type="application/javascript">
-
-      function Route(name, layer) {
-        this.name = name;
-        this.layer = layer;
-      }
-
-      function setupMap() {
-        var elt = document.getElementById('map-data');
-        var mapid = elt.getAttribute('map-data-target');
- 
-        var map = L.map(mapid);
-        L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-          attribution: 'Map data &copy; <a href="http://www.osm.org">OpenStreetMap</a>'
-        }).addTo(map);
-        return map;
-      }
-
-      function addGpx(gpxData) {
-        var elt = document.getElementById('map-data')
-        function _t(t) { return elt.getElementsByTagName(t)[0]; }
-        function _c(c) { return elt.getElementsByClassName(c)[0]; }
-        
-       
-
-        layer = new L.GPX(gpxData, {
-          async: true,
-          marker_options: {
-            startIconUrl: 'http://github.com/mpetazzoni/leaflet-gpx/raw/master/pin-icon-start.png',
-            endIconUrl:   'http://github.com/mpetazzoni/leaflet-gpx/raw/master/pin-icon-end.png',
-            shadowUrl:    'http://github.com/mpetazzoni/leaflet-gpx/raw/master/pin-shadow.png',
-          },
-        }).on('loaded', function(e) {
-          var gpx = e.target;
-          map.fitBounds(gpx.getBounds());
-
-          _t('h3').textContent = gpx.get_name();
-          _c('start').textContent = gpx.get_start_time().toDateString() + ', '
-            + gpx.get_start_time().toLocaleTimeString();
-          _c('distance').textContent = gpx.get_distance_imp().toFixed(2);
-          _c('duration').textContent = gpx.get_duration_string(gpx.get_moving_time());
-          _c('pace').textContent     = gpx.get_duration_string(gpx.get_moving_pace_imp(), true);
-          _c('avghr').textContent    = gpx.get_average_hr();
-          _c('elevation-gain').textContent = gpx.to_ft(gpx.get_elevation_gain()).toFixed(0);
-          _c('elevation-loss').textContent = gpx.to_ft(gpx.get_elevation_loss()).toFixed(0);
-          _c('elevation-net').textContent  = gpx.to_ft(gpx.get_elevation_gain()
-            - gpx.get_elevation_loss()).toFixed(0);
-        }).addTo(map);
-        return layer;
-      }
-
-      function readSingleFile(e) {
-        var file = e.target.files[0];
-        if (!file) {
-          return;
+        function Route(name, layer) {
+            this.name = name;
+            this.layer = layer;
         }
-        var reader = new FileReader();
-        reader.onload = function(e) {
-          var contents = e.target.result;
-          layer = addGpx(contents);
-          routes.push(new Route("name",layer));
-        };
-        reader.readAsText(file);
+
+        function setupMap() {
+            var elt = document.getElementById('map-data');
+            var mapid = elt.getAttribute('map-data-target');
+            var map = L.map(mapid);
+            L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: 'Map data &copy; <a href="http://www.osm.org">OpenStreetMap</a>'
+            }).addTo(map);
+            return map;
+        }
+
+        function addGpx(gpxData) {
+            var elt = document.getElementById('map-data')
+
+            function _t(t) {
+                return elt.getElementsByTagName(t)[0];
+            }
+
+            function _c(c) {
+                return elt.getElementsByClassName(c)[0];
+            }
+            layer = new L.GPX(gpxData, {
+                async: true
+                , marker_options: {
+                    startIconUrl: 'http://github.com/mpetazzoni/leaflet-gpx/raw/master/pin-icon-start.png'
+                    , endIconUrl: 'http://github.com/mpetazzoni/leaflet-gpx/raw/master/pin-icon-end.png'
+                    , shadowUrl: 'http://github.com/mpetazzoni/leaflet-gpx/raw/master/pin-shadow.png'
+                , }
+            , }).on('loaded', function (e) {
+                var gpx = e.target;
+                map.fitBounds(gpx.getBounds());
+            }).addTo(map);
+            return layer;
+        }
+
+        function readSingleFile(e) {
+            var file = e.target.files[0];
+            if (!file) {
+                return;
+            }
+            var reader = new FileReader();
+            reader.onload = function (e) {
+                var contents = e.target.result;
+                layer = addGpx(contents);
+                routes.push(new Route("name", layer));
+                
+                var list = document.getElementById('route-list');
+                var node = document.createElement('LI');
+                var input = document.getElementById('file-input');
+                var item = document.createTextNode(input.files[0].name);
+                node.appendChild(item);
+                list.appendChild(node);
+            };
+            reader.readAsText(file);
+        }
+        document.getElementById('file-input').addEventListener('change', readSingleFile, false);
         
-      }
-      
-      document.getElementById('file-input').addEventListener('change', readSingleFile, false);
-
-      var map = setupMap();
-      var routes = [];
-
+        // Global Variables
+        var map = setupMap();
+        var routes = [];
     </script>
-  </body>
+</body>
+
 </html>
