@@ -111,91 +111,30 @@
     </section>
     <script src="https://npmcdn.com/leaflet@1.0.0-rc.1/dist/leaflet.js"></script>
     <script src="https://rawgithub.com/mpetazzoni/leaflet-gpx/master/gpx.js"></script>
+    <script src="js/routes.js">
+    </script>
     <script type="application/javascript">
-        function Route(name, layer) {
-            this.name = name;
-            this.layer = layer;
-        }
-
-        function setupMap() {
-            var elt = document.getElementById('map-data');
-            var mapid = elt.getAttribute('map-data-target');
-            var map = L.map(mapid);
-            L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                attribution: 'Map data &copy; <a href="http://www.osm.org">OpenStreetMap</a>'
-            }).addTo(map);
-            return map;
-        }
-
-        function addGpx(gpxData) {
-            var elt = document.getElementById('map-data')
-
-            function _t(t) {
-                return elt.getElementsByTagName(t)[0];
-            }
-
-            function _c(c) {
-                return elt.getElementsByClassName(c)[0];
-            }
-            layer = new L.GPX(gpxData, {
-                async: true
-                , marker_options: {
-                    startIconUrl: 'http://github.com/mpetazzoni/leaflet-gpx/raw/master/pin-icon-start.png'
-                    , endIconUrl: 'http://github.com/mpetazzoni/leaflet-gpx/raw/master/pin-icon-end.png'
-                    , shadowUrl: 'http://github.com/mpetazzoni/leaflet-gpx/raw/master/pin-shadow.png'
-                , }
-            , }).on('loaded', function (e) {
-                var gpx = e.target;
-                map.fitBounds(gpx.getBounds());
-            }).addTo(map);
-            return layer;
-        }
-        
         function toggleRoute(e) {
             var index = e.target.value;
-            var layer = routes[index].layer;
+            var layer = routes.routes[index].layer;
             if (e.target.checked) {
-                layer.addTo(map);
+                layer.addTo(routes.map);
             }
             else {
-                layer.removeFrom(map);
+                layer.removeFrom(routes.map);
             }
         }
 
-        function readSingleFile(e) {
+        function addRoute(e) {
             var file = e.target.files[0];
             if (!file) {
                 return;
             }
-            var reader = new FileReader();
-            reader.onload = function (e) {
-                var contents = e.target.result;
-                var input = document.getElementById('file-input');
-                var name = input.files[0].name;
-                layer = addGpx(contents);
-                
-                var list = document.getElementById('route-list');
-                var item = document.createElement('LI');
-                var text = document.createTextNode(name);
-                var box = document.createElement('INPUT');
-                box.type = 'checkbox';
-                box.checked = true;
-                box.value = routes.length;
-                box.onchange = toggleRoute;
-                item.appendChild(box);
-                item.appendChild(text);
-                list.appendChild(item);
-                routes.push(new Route(name, layer));
-            };
-            reader.readAsText(file);
+            routes.addRouteFromFile(file);
         }
-        document.getElementById('file-input').addEventListener('change', readSingleFile, false);
-        
-        
-        
+        document.getElementById('file-input').addEventListener('change', addRoute, false);
         // Global Variables
-        var map = setupMap();
-        var routes = [];
+        var routes = new Routes("route-map");
     </script>
 </body>
 
