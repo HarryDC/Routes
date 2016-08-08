@@ -86,31 +86,51 @@
         .gpx ul.info li span {
             color: black;
         }
+        
+        .map {
+            height: 500px;
+        }
     </style>
 </head>
 
 <body>
     <input type="file" id="file-input" />
-    <section id="map-data" class="gpx" map-data-target="route-map">
+    <div id="map-data" class="jumbotron" map-data-target="route-map">
         <header> <span class="start"></span> </header>
-        <article>
+        <div>
             <div class="map" id="route-map"></div>
             <div id="route-table">
                 <ul id="route-list"></ul>
             </div>
-        </article>
-        <footer>
-            <ul class="info">
-                <li>Distance:&nbsp;<span class="distance"></span>&nbsp;mi</li> &mdash;
-                <li>Duration:&nbsp;<span class="duration"></span></li> &mdash;
-                <li>Pace:&nbsp;<span class="pace"></span>/mi</li> &mdash;
-                <li>Avg&nbsp;HR:&nbsp;<span class="avghr"></span>&nbsp;bpm</li> &mdash;
-                <li>Elevation:&nbsp;+<span class="elevation-gain"></span>&nbsp;ft, -<span class="elevation-loss"></span>&nbsp;ft (net:&nbsp;<span class="elevation-net"></span>&nbsp;ft)</li>
-            </ul>
-        </footer>
-    </section>
+        </div>
+    </div>
+    <div class="panel panel-default">
+        <button type="button" class="btn btn-default">New Place</button>
+        <div class="panel-heading">
+            <button type="button" class="btn btn-default">-</button> McArthur
+            <button type="button" class="btn btn-default">Add Route</button>
+        </div>
+        <div class="panel-body">
+            <table class="table">
+                <tr>
+                    <td>50</td>
+                    <td>
+                        <button type="button" class="btn btn-default">-</button>
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
     <script src="https://npmcdn.com/leaflet@1.0.0-rc.1/dist/leaflet.js"></script>
     <script src="https://rawgithub.com/mpetazzoni/leaflet-gpx/master/gpx.js"></script>
+    <script src="https://cdn.jsdelivr.net/handlebarsjs/4.0.5/handlebars.js">
+    </script>
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <!-- Optional theme -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
+    <!-- Latest compiled and minified JavaScript -->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
     <script src="js/routes.js">
     </script>
     <script type="application/javascript">
